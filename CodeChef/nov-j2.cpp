@@ -1,0 +1,255 @@
+
+// <-------------------[sWitCHcAsE]---------------------->
+
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <cctype>
+#include <string>
+#include <cstring>
+#include <cmath>
+#include <ctime>
+
+#define FOR(i,a) for(int i=0;i<a;i++)
+#define FORS(i,a,b) for(int i=a;i<b;i++)
+#define FORR(i,a) for(int i=a;i>=0;i--)
+#define foreach(it,x) for(typeof(x.begin()) it=x.begin();it!=x.end();++it)
+#define pb push_back
+#define VI vector<int>
+#define VS vector<string>
+#define MAX2(a,b) (a)<(b)?(b):(a)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+#define LEN(s) strlen(s)
+#define tests(tc) int tc;scanf("%d",&tc);while(tc--)
+#define TEN(n) (long long)pow(10LL,n)
+#define bits __builtin_popcount
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef unsigned int uint;
+
+using namespace std;
+inline VS split(string s,char* tok){VS vs;char *pch;char *q= (char*)s.c_str();	pch=strtok(q," ");	while(pch !=NULL){vs.pb(string(pch));pch=strtok(NULL,tok);}return vs;}
+inline int digitsIn(ll n){int ans=0;while(n){n/=10;ans++;}return ans;}
+
+int arr[1001][1001];
+int n1,n2;
+
+
+int dirr[]={0,1,1,1};
+int dirc[]={1,0,1,1};
+int visited[1001][1001];
+int MOD=23102009;
+int next1[1001][26];
+int next2[1001][26];
+int lcsc[1001][1001];
+
+/*
+inline int inbounds(int r,int c)
+{
+	return (r>=0 && c>=0 && r<=n1 && c<=n2);
+}
+int dfs(int r,int c)
+{
+	if(arr[1][r][c]==-1 && visited[r][c]==-1)
+	{
+		cerr<<"1 "<<r<<" "<<c<<endl;
+		return visited[r][c]=1;
+	}
+	
+	
+	if(visited[r][c]!=-1)
+	{
+		cerr<<"3 "<<r<<" "<<c<<endl;
+		return 0;
+	}
+	if(r<=0 || c<=0)
+	{
+		cerr<<"4 "<<r<<" "<<c<<endl;
+		return visited[r][c]=0;
+	}
+	if(arr[1][r][c]!=3)
+	{
+		
+		int rr=r-dirr[arr[1][r][c]];
+		int cc=c-dirc[arr[1][r][c]];
+		cerr<<"5 "<<r<<" "<<c<<endl;
+		cerr<<"VAL IN ARR "<<arr[1][r][c]<<endl;
+		visited[rr][cc]=dfs(rr,cc)%MOD;
+		cerr<<" val = "<<visited[rr][cc]<<endl;
+		return visited[rr][cc];
+	}
+	else
+	{
+		int a=0;
+		int rr[2],cc[2];
+		int ans=0;
+		while(a<2)
+		{
+			rr[a]=r-dirr[a];
+			cc[a]=c-dirc[a];
+			a++;
+			
+		}
+		int val;
+		//int ans=0;
+		int ans1;
+		if(inbounds(rr[0],cc[0]))
+		{
+			 val=(arr[1][rr[0]][cc[0]]>=2);
+			 ans=dfs(rr[0],cc[0])%MOD;
+		}
+		if(inbounds(rr[1],cc[1]))
+		{
+			 val&=(arr[1][rr[1]][cc[1]]>=2);
+			 ans1=dfs(rr[1],cc[1])%MOD;
+		}
+		if(val)
+		{
+			ans=(ans+ans1)%MOD;
+			cerr<<"6 "<<r<<" "<<c<<endl;
+			cerr<<"val in "<<r<<"  "<<c<<" "<<(visited[r][c]=ans)<<endl;
+			return visited[r][c]=ans;
+		}
+		cerr<<"7 "<<r<<" "<<c<<endl;
+		return visited[r][c]=MAX2(ans,ans1);
+	}
+}
+*/
+
+int main()
+{
+	string s1,s2;
+	tests(tc)
+	{
+		cin>>s1>>s2;
+		memset(arr,0,sizeof arr);
+		n1=s1.size(),n2=s2.size();
+		FOR(i,n2+1)lcsc[n1][i]=1;
+		FORR(i,n1-1)
+		{
+			lcsc[i][n2]=1;
+			lcsc[n1][n2]=1;
+			FORR(j,n2-1)
+			{
+				lcsc[i][j]=0;
+				if(s1[i]==s2[j])
+				{
+					arr[i][j]= 1+arr[i+1][j+1];
+					lcsc[i][j]= lcsc[i+1][j+1];
+				}
+				else
+				{
+					arr[i][j]=max(arr[i+1][j],arr[i][j+1]);
+					if(arr[i][j]==arr[i+1][j])
+					lcsc[i][j]=(lcsc[i][j]+lcsc[i+1][j]) %MOD;	
+					if(arr[i][j]==arr[i][j+1])
+					lcsc[i][j]=(lcsc[i][j]+lcsc[i][j+1]) %MOD;
+					if(arr[i][j]==arr[i+1][j+1])
+					{
+						lcsc[i][j]=(lcsc[i][j] - lcsc[i+1][j+1] + 2*MOD)%MOD;
+					}	
+				}
+			}
+		}
+		cout<<arr[0][0];
+		cout<<" "<<lcsc[0][0]<<endl;
+		/*
+		FOR(i,26)
+		{
+			next1[n1][i]=n1;
+			next2[n2][i]=n2;
+		}
+		FORR(i,n1-1)
+		{
+			FOR(j,26)
+			{
+				if(s1[i]==(char)('a'+j))
+				next1[i][j]=i;
+				else next1[i][j]=next1[i+1][j];
+			}
+		}
+		FORR(i,n2-1)
+		{
+			FOR(j,26)
+			{
+				if(s2[i]=='a'+j)
+				next2[i][j]=i;
+				else next2[i][j]=next2[i+1][j];
+			}
+		}
+		memset(lcsc,0,sizeof lcsc);
+		FORR(i,n1-1)
+		{
+			FORR(j,n2-1)
+			{
+				
+					for(char k='a';k<='z';k++)
+					{
+						int x=next1[i][k-'a'];
+						int y=next2[j][k-'a'];
+						//cout<<"x= "<<x<<" y= "<<y<<endl;
+						if(x!=n1 && y!=n2)
+						if(arr[x][y]==arr[i][j]-1)
+						{
+							lcsc[i][j]=(lcsc[x][y]+lcsc[i][j])%MOD;
+						}
+					}
+				
+			}
+		}
+		cout<<"C : "<<endl;
+		FOR(i,n1)
+		{
+		
+			FOR(j,n2)cout<<lcsc[i][j];
+			cout<<endl;
+			
+		}
+		
+		
+		
+		cerr<<"LCS DONE "<<endl;
+		cout<<(arr[0][n1][n2])<<" ";
+		//cerr<<"CALLING DFS " <<endl;
+		memset(visited,-1,sizeof visited);
+		int ans=dfs(n1,n2);
+		cerr<<"-------[VISITED]--------"<<endl;
+		FOR(i,n1+1)
+		{
+			FOR(j,n2+1)
+			{
+				cerr<<visited[i][j]<<" ";
+			}
+			cerr<<endl;
+		}
+		cerr<<"---------------"<<endl;
+		cerr<<"-------[DIR]--------"<<endl;
+		FOR(i,n1+1)
+		{
+			FOR(j,n2+1)
+			{
+				cerr<<arr[1][i][j]<<" ";
+			}
+			cerr<<endl;
+		}
+		cerr<<"---------------"<<endl;
+		cout<<ans<<endl;*/
+		
+	}
+}

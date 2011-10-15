@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+   xml:lang="en" lang="en" id="facebook">
+  <head>
+    <title>Facebook | Error</title>
+    <meta http-equiv="Content-Type"  content="text/html; charset=utf-8" />
+    <meta http-equiv="Cache-Control" content="no-cache" />
+    <meta name="robots"              content="noindex,nofollow" />
+    <style type="text/css">
+      html, body {
+        margin:       0px;
+        padding:      0px;
+        text-align:   center;
+        font-family:  "Lucida Grande", "Tahoma", "Verdana", "Arial", sans-serif;
+        color:        #333333;
+      }
+
+      a.menu {
+        margin:     auto;
+        position:   relative;
+        display:    block;
+        width:      964px;
+        height:     29px;
+        background: #3B5998 url('http://static.ak.fbcdn.net/common/error.png')
+                    top center no-repeat;
+      }
+
+      .core {
+        text-align: left;
+        margin:     auto;
+        width:      904px;
+        padding:    1em 0em;
+      }
+
+      h1 {
+        font-size:  18px;
+      }
+
+      p {
+        font-size:  13px;
+      }
+
+      .footer {
+	    border-top: 1px solid #DDDDDD;
+        color:      #777777;
+        float:      left;
+        width:      904px;
+        padding:    5px 8px 6px 0;
+        font-size:  11px;
+      }
+    </style>
+    <script type="text/javascript" charset="utf-8">
+      function back() {
+        if (1 < history.length) {
+          history.back();
+          return false;
+        }
+        return true;
+      }
+    </script>
+  </head>
+  <body>
+    <a class="menu" href="http://www.facebook.com/"></a>
+    <div class="core">
+      <h1>Sorry, something went wrong.</h1>
+      <p>We're working on getting this fixed as soon as we can.</p>
+      <p><a onclick="return back();" href="http://www.facebook.com/">Go Back</a></p>
+      <div class="footer" id="pagefooter_copyright">
+        Facebook &copy;
+        <span title="##IPADDRESS##">20</span>10
+        &#183;
+        <a href="http://www.facebook.com/help/">Help</a>
+      </div>
+    </div>
+  </body>
+</html>

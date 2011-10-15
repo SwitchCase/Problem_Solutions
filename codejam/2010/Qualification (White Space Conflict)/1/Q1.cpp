@@ -1,0 +1,44 @@
+#include<cstdio>
+#include<map>
+#include<vector>
+#include<iostream>
+#include<cstring>
+#include<regex.h>
+
+using namespace std;
+
+int main()
+{
+	regex_t reg;
+	regmatch_t matches[1];
+	int l,d,n,i=0,td;
+	string s; 
+	scanf("%d%d%d",&l,&d,&n);
+	vector<string> mp;
+	mp.reserve(d+2);
+	td=d;
+	while(d--)
+	{
+		cin>>s;
+		mp.push_back(s);
+	}
+	string pattern;
+	int ans=0;
+	while(i++,n--)
+	{
+		ans=0;
+		cin>>s;
+		for(int j=0;j<strlen(s.c_str());j++)
+		{
+			if(s[j]=='(')s[j]='[';
+			else if(s[j]==')')s[j]=']';
+		}
+		pattern=s;
+		regcomp(&reg,pattern.c_str(),REG_EXTENDED|REG_ICASE);
+		for(int j=0;j<td;j++)
+		{
+			if(regexec(&reg,mp[j].c_str(),1,matches,0)==0)ans++;
+		}
+		cout<<"Case #"<<i<<": "<<ans<<endl;
+	}
+}

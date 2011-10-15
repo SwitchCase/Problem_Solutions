@@ -1,0 +1,286 @@
+
+// <-------------------[sWitCHcAsE]---------------------->
+
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <cctype>
+#include <string>
+#include <cstring>
+#include <cmath>
+#include <ctime>
+
+#define FOR(i,a) for(int i=0;i<a;i++)
+#define FORS(i,a,b) for(int i=a;i<b;i++)
+#define FORR(i,a) for(int i=a;i>=0;i--)
+#define foreach(it,x) for(typeof(x.begin()) it=x.begin();it!=x.end();++it)
+#define pb push_back
+#define VI vector<int>
+#define VS vector<string>
+#define MAX2(a,b) (a)<(b)?(b):(a)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+#define LEN(s) strlen(s)
+#define tests(tc) int tc;scanf("%d",&tc);while(tc--)
+#define TEN(n) (long long)pow(10LL,n)
+#define bits __builtin_popcount
+#define INIT(arr,val) memset(arr,val,sizeof arr)
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef unsigned int uint;
+
+using namespace std;
+inline VS split(string s,char* tok){VS vs;char *pch;char *q= (char*)s.c_str();	pch=strtok(q," ");	while(pch !=NULL){vs.pb(string(pch));pch=strtok(NULL,tok);}return vs;}
+inline int digitsIn(ll n){int ans=0;while(n){n/=10;ans++;}return ans;}
+
+int win[1<<13]={0};
+int trans[1<<13][6];
+int ans[1<<13]={0};
+int path[1<<13];
+
+
+
+int getN(string a)
+{
+	int n=0;
+	FOR(i,a.size())
+	{
+		n<<=1;
+		if(a[i]=='1')
+		{
+			n+=1;
+		}
+	}
+	return n;
+}
+
+string getS(int n)
+{
+	string a="0000000000000";
+	FOR(i,13)
+	{
+		if((n&(1<<i))>0)
+		a[12-i]='1';
+	}
+	return a;
+}
+
+string transform1(string a,int type)
+{
+	int tran[2][13]={{3,1,0,6,4,2,8,7,5,9,10,11,12}, {2,1,5,0,4,8,3,7,6,9,10,11,12}};
+	string b=a;
+	FOR(i,13)
+	{
+		b[i]=a[tran[type][i]];
+	}
+	return b;
+}
+
+string transform2(string a, int type)
+{
+	int tran[2][13]={ {0,4,2,1,7,5,3,9,8,6,10,11,12} ,{0,3,2,6,1,5,9,4,8,7,10,11,12} };
+	string b=a;
+	FOR(i,13)b[i]=a[tran[type][i]];
+	return b;
+}
+
+string transform3(string a,int type)
+{
+	int tran[2][13]={{0,1,2,3,4,5,9,7,6,11,8,12,10}, {0,1,2,3,4,5,8,7,10,6,12,9,11} };
+	string b=a;
+	FOR(i,13)b[i]=a[tran[type][i]];
+	return b;
+}
+
+string Transforms(int t,string a,int type)
+{
+	switch(t)
+	{
+		case 0: return transform1(a,type);
+		case 1:	return transform2(a,type);
+		case 2:	return transform3(a,type);
+	}	
+}
+void generate()
+{
+	int max=1<<13;
+	FOR(i,max)
+	{
+		if(bits(i)==4)
+		{
+			win[i]=1;
+			string s=getS(i);
+			string s1;
+			int a;
+			FOR(j,3)
+			{
+				FOR(k,2)
+				{
+					s1=Transforms(j,s,k);
+					a=getN(s1);
+					trans[i][2*j + k]=a;
+					if(a==600)
+					{
+		//				cerr<<"FND "<<i<<endl;
+						ans[i]=1;
+					}
+				}
+			}
+		}
+		
+	}
+}
+struct item
+{
+	int st;
+	int sc;
+};
+
+void finish()
+{
+	INIT(path,-1);
+	int disc[1<<13]={0};
+	int s=600;
+	int sc=0;
+	item f;
+	f.st=s;
+	f.sc=sc;
+	queue<item> Q;
+	Q.push(f);
+	string s1,s2;
+	int a,curr;
+	while(!Q.empty())
+	{
+		item it= Q.front();
+		Q.pop();
+		sc=it.sc;
+		curr=it.st;
+		if(disc[curr]!=0)continue;
+		disc[curr]=1;
+		FOR(j,3)
+		{
+			FOR(k,2)
+			{
+				s2=getS(curr);
+				s1=Transforms(j,s2,k);
+				a=getN(s1);
+				item temp;
+				temp.st=a;
+				temp.sc=sc+1;
+				if(disc[a]==0)
+				{
+					Q.push(temp);
+					ans[a]=sc;
+					
+					//if(path[a]!=-1)cerr<<"CRAPP"<<endl;
+					path[a]=curr;
+				}
+				
+				
+			}
+		}
+	}
+}
+
+
+struct item1
+{
+	int st;
+	int sc;
+	string p;
+};
+
+int main()
+{
+	generate();
+	//finish();
+	//int tra[13]={2,0,3,1,4,5,8,6,9,7,10,12,11};
+	tests(tc)
+	{
+		string s,q="0000000000000";
+		int n,t,an;
+		cin>>s;
+		
+		//FOR(i,13)q[i]=s[tra[i]];
+	//	cerr<<"CVRT 1 "<<q<<endl;
+		n=getN(s);
+	//	cerr<<"CVRT 2 "<<n<<endl;
+		/*cout<<ans[n]<<endl;
+		
+		while(n!=600)
+		{
+			t=n;
+			n=path[t];
+			cerr<<"PATH OF "<<t<<"  is "<<path[t]<<" ==> "<<getS(path[t])<<endl;
+			
+			FOR(i,6)
+			{
+				if(trans[t][i]==n)
+				{
+					cout<<(i/2)<<" "<<((i+1)%2)<<endl;
+					break;
+				}
+			}
+			
+		}*/
+		
+		queue<item1> Q;
+		item1 f;
+		f.st=n;
+		f.sc=0;
+		f.p="";
+		string s1,s2;
+		int a;
+		Q.push(f);
+		int disc[1<<13]={0};
+		item1 pri;
+		while(!Q.empty())
+		{
+			item1 it=Q.front();
+			Q.pop();
+			int sc=it.sc;
+			
+			int st=it.st;
+			
+			if(st==600)
+			{
+				pri=it;
+				break;
+			}
+			FOR(i,6)
+			{
+				item1 tt;
+				tt.st=trans[st][i];
+				if(disc[tt.st])continue;
+				disc[st]=1;	
+				tt.sc=sc+1;
+				tt.p=it.p;
+				tt.p+=('0'+(i/2));
+				tt.p+=" ";
+				tt.p+=('0'+((i)%2));
+			//	tt.p+= "  " + getS(tt.st);
+				tt.p+="\n";
+				Q.push(tt);
+			}
+		}
+		
+		cout<<pri.sc<<endl;
+		cout<<pri.p;
+		
+	}
+}

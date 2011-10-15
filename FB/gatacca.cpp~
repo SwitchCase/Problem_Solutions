@@ -1,0 +1,138 @@
+
+// <-------------------[sWitCHcAsE]---------------------->
+
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <cctype>
+#include <string>
+#include <cstring>
+#include <cmath>
+#include <ctime>
+#include <cassert>
+
+#define FOR(i,a) for(int i=0;i<a;i++)
+#define FORS(i,a,b) for(int i=a;i<b;i++)
+#define FORR(i,a) for(int i=a;i>=0;i--)
+#define foreach(it,x) for(typeof(x.begin()) it=x.begin();it!=x.end();++it)
+#define pb push_back
+#define VI vector<int>
+#define VS vector<string>
+#define MAX2(a,b) (a)<(b)?(b):(a)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+#define LEN(s) strlen(s)
+#define tests(tc) int tc;scanf("%d",&tc);while(tc--)
+#define TEN(n) (long long)pow(10LL,n)
+#define bits __builtin_popcount
+#define INIT(arr,val) memset(arr,val,sizeof arr)
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef unsigned int uint;
+
+using namespace std;
+inline VS split(string s,char* tok){VS vs;char *pch;char *q= (char*)s.c_str();	pch=strtok(q," ");	while(pch !=NULL){vs.pb(string(pch));pch=strtok(NULL,tok);}return vs;}
+inline int digitsIn(ll n){int ans=0;while(n){n/=10;ans++;}return ans;}
+typedef pair<int,int> ii;
+
+struct interval{
+  int st;
+  int fi;
+  int w;
+  interval(int s,int f,int wt):st(s),fi(f),w(wt){}
+  interval(){st=0;fi=0;w=-1;}
+};
+
+#define MAX 10001
+#define ERR(x)cout<<#x<<" : "<<x<<endl
+
+void DEBUG(int x)
+{
+  #ifndef JUDGE
+  ERR(x);
+  #endif
+}
+//#define JUDGE
+  
+interval arr[MAX];
+int p[MAX];
+int dp[MAX];
+int n,m;
+int comp1(const void* a,const void* b)
+{
+  
+  interval *ia=(interval*)a;
+  interval *ib=(interval*)b;
+  return ia->st < ib->st;
+}
+
+
+int solve(int ind)
+{
+  if(ind<=0 || ind>m)return 0;
+  if(dp[ind]>-1)return dp[ind];
+  return dp[ind]=max(arr[ind-1].w + solve(p[ind-1]),solve(ind-1));
+}
+
+int main(int argc,char** argv)
+{
+  freopen(argv[1],"r",stdin);
+  scanf("%d\n",&n);
+  FOR(i,(n+80)/80){
+    scanf("%*s");
+  }
+  
+  /* scanf("%*s");*/
+  scanf("%d",&m);
+  ERR(m);
+  ERR(n);
+  assert(m>0 && m<MAX);
+  FOR(i,m)
+  {
+    scanf("%d %d %d",&arr[i].st,&arr[i].fi,&arr[i].w);
+  }
+  ERR(1);
+
+  qsort(&arr[0],m,sizeof (interval),comp1);
+  ERR(2);
+  p[0]=0;
+  cout<<"SORTED "<<endl;
+  FOR(i,m){
+    cout<<arr[i].st<<" , "<<arr[i].fi<<" = "<<arr[i].w<<endl;
+  }
+  
+  cout<<"---------"<<endl;
+  FOR(i,m)p[i]=0;
+  for(int i=1;i<m;i++){
+    for(int j=i-1;j>=0;j--){
+      if(arr[j].fi <=arr[i].st){p[i]=j+1;break;}
+      
+    }
+  }
+  FOR(i,m){
+    ERR(p[i]);
+
+
+  }
+  ERR(3);
+    FOR(i,m)dp[i]=-1;
+    int ans=max(arr[m-1].w + solve(p[m-1]),solve(m-1));
+    ERR(4);
+    printf("%d\n",ans);
+
+}

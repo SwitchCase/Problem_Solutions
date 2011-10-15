@@ -1,0 +1,120 @@
+
+// <-------------------[sWitCHcAsE]---------------------->
+
+#include <vector>
+#include <list>
+#include <map>
+#include <set>
+#include <deque>
+#include <queue>
+#include <stack>
+#include <bitset>
+#include <algorithm>
+#include <functional>
+#include <numeric>
+#include <utility>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <cctype>
+#include <string>
+#include <cstring>
+#include <cmath>
+#include <ctime>
+
+#define FOR(i,a) for(int i=0;i<a;i++)
+#define FORS(i,a,b) for(int i=a;i<b;i++)
+#define FORR(i,a) for(int i=a;i>=0;i--)
+#define pb push_back
+#define VI vector<int>
+#define VS vector<string>
+#define MAX2(a,b) (a)<(b)?(b):(a)
+#define MIN2(a,b) (a)<(b)?(a):(b)
+#define LEN(s) strlen(s)
+#define tests(tc) int tc;scanf("%d",&tc);while(tc--)
+#define TEN(n) (long long)pow(10LL,n)
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+typedef unsigned int uint;
+inline int digitsIn(ll n){int ans=0;while(n){n/=10;ans++;}return ans;}
+using namespace std;
+
+
+
+int row[1235];
+int col[5679];
+inline int getOrigRow(int val)
+{
+	return val/5679;
+}
+inline int getOrigCol(int val)
+{
+	return val%5679;
+}
+
+inline int getOrigVal(int r,int c)
+{
+	return r*5678 + c+1;
+}
+
+inline void init()
+{
+	for(int i=0;i<1235;i++)row[i]=i;
+	for(int j=0;j<5679;j++)col[j]=j;
+}
+inline void swapRow(int x,int y)
+{
+	swap(row[x],row[y]);
+}
+inline void swapCol(int x,int y)
+{
+	swap(col[x],col[y]);
+}
+inline int getVal(int r,int c)
+{
+	return getOrigVal(row[r],col[c]);
+}
+
+inline void printZ(int val)
+{
+	int r=getOrigRow(val);
+	int c=getOrigCol(val);
+	for(int i=0;i<1234;i++)if(r==row[i]){r=i;break;}
+	for(int i=0;i<5678;i++)if(c==col[i]){c=i;break;}
+	cerr<<"OUT ";
+	printf("%d %d\n",r+1,c+1);
+}
+
+int main()
+{
+	init();
+	char q;
+	while(scanf("%c",&q)!=EOF)
+	{
+		int x,y,val;
+		switch(q)
+		{
+			case 'R':
+				if(scanf("%d %d",&x,&y)==EOF)break;
+				swapRow(x-1,y-1);
+				break;
+			case 'C':
+				if(scanf("%d %d",&x,&y)==EOF)break;
+				swapCol(x-1,y-1);
+				break;
+			case 'Q':
+				if(scanf("%d %d",&x,&y)==EOF)break;cerr<<"OUT ";
+				printf("%d\n",getVal(x-1,y-1));
+				break;
+			case 'W':
+				if(scanf("%d",&val)==EOF)break;
+				printZ(val-1);
+				break;
+			default:break;
+		}
+	}
+}
