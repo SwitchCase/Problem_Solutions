@@ -43,17 +43,23 @@ public class SearchRotatedArray_33 {
                     return mid;
                 }
                 else if (nums[mid] > nums[s]) {
-                    s = mid + 1;
-                } else {
+                    s = mid;
+                } else if (nums[mid] < nums[e - 1]){
                     e = mid;
+                } else { //equals!
+                    for (int i = s; i < e; i++) {
+                        if (i + 1 < nums.length && nums[i] > nums[i + 1]) return i;
+                    }
+                    return 0;
                 }
             }
-            return  0;
+            return s;
         }
     }
 
     public static void main(String[] args) {
         int[][] cases = {
+                {2, 2, 2, 2,2,2,2,2, 3,2,2,2,2},
                 {120, 199, 201, 232, 1,3, 11, 99, 102, 105},
                 {1, 2},
                 {1},
@@ -68,7 +74,8 @@ public class SearchRotatedArray_33 {
                 {3,1,2}
         };
         Random rand = new Random();
-        for (int[] kase: cases){
+        for (int i = 0; i < cases.length; i++){
+            int[] kase = cases[i];
             int ans = rand.nextInt(kase.length);
             int target = kase[ans];
             System.out.println("Input: " + Arrays.toString(kase) + ", target = " + target + " ; output: " + new Solution().search(kase, target) +" expected: " + ans);

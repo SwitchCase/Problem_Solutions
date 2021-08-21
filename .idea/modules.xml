@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/EOS 11/EOS 11.iml" filepath="$PROJECT_DIR$/EOS 11/EOS 11.iml" />
+      <module fileurl="file://$PROJECT_DIR$/FB/FB.iml" filepath="$PROJECT_DIR$/FB/FB.iml" />
+      <module fileurl="file://$PROJECT_DIR$/LeetCode/LeetCode.iml" filepath="$PROJECT_DIR$/LeetCode/LeetCode.iml" />
+    </modules>
+  </component>
+</project>

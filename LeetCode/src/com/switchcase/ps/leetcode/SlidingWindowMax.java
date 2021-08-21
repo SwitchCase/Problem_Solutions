@@ -1,5 +1,8 @@
 package com.switchcase.ps.leetcode;
 
+import java.util.ArrayDeque;
+import java.util.Arrays;
+
 /**
  * https://leetcode.com/problems/sliding-window-maximum/
  */
@@ -28,7 +31,28 @@ public class SlidingWindowMax {
         }
     }
 
+    static class Solution3 {
+        public int[] maxSlidingWindow(int[] a, int k) {
+            if (a == null || k <= 0) return new int[0];
+            int[] res = new int[a.length - k + 1];
+            ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
+            for (int i = 0; i < a.length; i++) {
+                while(!deque.isEmpty() && deque.peekFirst() < i - k + 1) {
+                    deque.pollFirst();
+                }
+                while(!deque.isEmpty() && a[deque.peekLast()] < a[i]) {
+                    deque.pollLast();
+                }
+                deque.offerLast(i);
+                if (i >= k - 1) {
+                    res[i-k+1] = a[deque.peekFirst()];
+                }
+            }
+            return res;
+        }
+    }
+
     public static void main(String[] args) {
-        System.out.println(new Solution().maxSlidingWindow(new int[] {1, 3, -1, -3, 5, 3,6, 7},  3));
+        System.out.println(Arrays.toString(new Solution3().maxSlidingWindow(new int[] {1, 3, -1, -3, 5, 3,6, 7},  3)));
     }
 }

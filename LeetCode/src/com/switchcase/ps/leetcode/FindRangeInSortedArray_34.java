@@ -10,6 +10,31 @@ public class FindRangeInSortedArray_34 {
     static class Solution {
         public int[] searchRange(int[] nums, int target) {
             if (nums.length == 0) return new int[] {-1, -1};
+            int lhs = find(nums, target);
+            if (nums[lhs] != target) {
+                return new int[]{-1,-1};
+            }
+            int rhs = find(nums, target + 1) - 1;
+            return new int[]{lhs, rhs};
+        }
+
+        private int find(int[] nums, int v) {
+             int lo = 0, hi = nums.length;
+             while(lo < hi) {
+                 int mid = lo + (hi - lo)/2;
+                 if (nums[mid] < v) {
+                     lo = mid + 1;
+                 } else {
+                     hi = mid;
+                 }
+             }
+             return lo;
+        }
+    }
+
+    static class SolutionSmallLarge {
+        public int[] searchRange(int[] nums, int target) {
+            if (nums.length == 0) return new int[] {-1, -1};
             int lhs = findSmallest(nums, target);
             int rhs = findLargest(nums, target);
             if (lhs == -1 || rhs == -1) {
