@@ -1,69 +1,34 @@
 package com.switchcase.ps.leetcode;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public class PatchingArray330 {
-    public static void main(String[] args) {
-        Solution solution = new Solution();
-        //int[] input = {1, 2, 31, 33};
-        //int n = 2147483647;
-        //int n = 1023;
-        int[] input = {1,2,2,6,34,38,41,44,47,47,56,59,62,73,77,83,87,89,94};
-        int n = 20;
-
-        //int[] input = {1, 2, 2, 2, 2};
-        //int n = 16;
-        System.out.println("Ans is" + solution.minPatches(input, n));
-    }
-
     private static class Solution {
 
         public int minPatches(int[] input, int n) {
-            int idx = 0, ans = 0;
-            if (input.length > 0 && input[0] == 1) {
-                idx = 1;
-            } else ans++;
-            long s = 1L;
-            long t = (idx < input.length)? input[idx] : n;
-            boolean completed = false;
-            boolean last = t == n;
-
-            while(!completed && s < n) {
-                if (s < t) {
-                    if (s+1 == t) {
-                        if (last) {
-                            ans++;
-                            completed = true;
-                        }
-                        s+=t;
-                        idx++;
-                        t = (idx < input.length)? Math.min(input[idx], n) : n;
-                        if (t == n) last = true;
-                        continue;
-                    }
-                    if (last) {
-                        long diff = t - s;
-                        if (s > diff) {
-                            ans++;
-                            completed = true;
-                            continue;
-                        }
-                    }
-                    long p2 = s+1;
-                    do  {
-                        s += p2;
-                        ans++;
-                        p2 = s + 1;
-                    } while (s + p2 <= t);
-                } else {
-                    if (last) {
-                        completed = true;
-                    }
-                    s+=t;
-                    idx++;
-                    t = (idx < input.length)? Math.min(input[idx], n) : n;
-                    if (t == n) last = true;
-                }
+            List<Integer> list = new ArrayList<>();
+            list.add(0);
+            list.addAll(Arrays.stream(input).boxed().collect(Collectors.toList()));
+            if (input[input.length - 1] < n) {
+                list.add(n);
             }
-            return ans;
+
+            long covered = 0;
+            int patch=0;
+            int idx = 1;
+
+            while(idx < list.size() && covered < n) {
+                while (covered + 1 < list.get(idx) && covered < n) {
+                    patch++;
+                    covered += covered + 1;
+                }
+                covered += list.get(idx);
+                idx++;
+            }
+            return patch;
         }
     }
 }

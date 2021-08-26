@@ -1,42 +1,45 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
+import java.util.stream.Collectors;
 
 public class MinimumArrows452 {
 
     class Solution {
 
         public int findMinArrowShots(int[][] input) {
-            List<Point> points = new ArrayList<>();
-            for (int i = 0; i < input.length; i++) {
-                int[] p = input[i];
-                points.add(new Point(p[0], p[1]));
-            }
+            int[][] sorted = Arrays.stream(input)
+                    .sorted(Comparator.comparingInt(array -> array[0]))
+                    .collect(Collectors.toList())
+                    .toArray(new int[0][0]);
+            int arrow = 0;
+            int count = sorted.length;
+            int idx = 0;
 
-            points.sort(Comparator.comparingInt((Point a) -> a.s).reversed());
-            int start = 0;
-            int next = 1;
-            int arrows = 0;
-            while( start < points.size()) {
-                while (next < points.size() && (points.get(next).s <= points.get(start).s && points.get(next).e >= points.get(start).s)) {
-                    next++;
+            while (idx < count) {
+                int start = idx + 1;
+                int oxStart = sorted[idx][0];
+                int oxEnd = sorted[idx][1];
+
+                while (start < count) {
+                    if (overlap(oxStart, oxEnd, sorted[start][0], sorted[start][1])
+                            || overlap(sorted[start][0], sorted[start][1], oxStart, oxEnd)) {
+                        oxStart = Math.max(oxStart, sorted[start][0]);
+                        oxEnd = Math.min(oxEnd, sorted[start][1]);
+                        start++;
+                    } else {
+                        break;
+                    }
                 }
-                start = next;
-                arrows++;
+                arrow++;
+                idx = start;
             }
-            return arrows;
+            return arrow;
         }
 
-        class Point {
-            int s;
-            int e;
-
-            Point(int s, int e) {
-                this.s = s;
-                this.e = e;
-            }
+        private boolean overlap(int sA, int eA, int sB, int eB) {
+            return (sB >= sA && sB <= eA);
         }
     }
 }
