@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class NonOverlappingIntervals435 {
 
@@ -13,19 +14,36 @@ public class NonOverlappingIntervals435 {
         System.out.println(ans);
     }
 
-    static class Solution {
+    class Solution {
         public int eraseOverlapIntervals(int[][] intervals) {
-            Arrays.sort(intervals, Comparator.comparingInt(v -> v[1]));
-            if (intervals.length == 0) return 0;
-            int added = 1;
-            int end = intervals[0][1];
-            for (int i = 1; i < intervals.length; i++) {
-                if (intervals[i][0] >= end) {
-                    added++;
-                    end = intervals[i][1];
+            int[][] sorted = Arrays.stream(intervals)
+                    .sorted(Comparator.comparingInt((int[] x) -> x[1]))
+                    .collect(Collectors.toList()).toArray(new int[0][0]);
+            int removed = 0;
+            int count = sorted.length;
+            int keptIdx = 0;
+            int keptS = sorted[keptIdx][0];
+            int keptE = sorted[keptIdx][1];
+            for (int i = 1; i < count; i++) {
+                if (overlap(keptS, keptE, sorted[i][0], sorted[i][1])) {
+                    removed++;
+                } else {
+                    keptE = sorted[i][1];
+                    keptS =  sorted[i][0];
                 }
             }
-            return intervals.length - added;
+            return removed;
+        }
+
+        private boolean overlap(int sA, int eA, int sB, int eB) {
+            if (eA - sA >= eB - eA) {
+                //A is >= B in terms of size.
+                return (sB < sA && eB > sA)  //B overlaps around sA
+                        || (sB < eA && eA < eB)  //B overlaps around sB
+                        || (sA <= sB && eA >= eB); //B is fully overlapping with A.
+            } else {
+                return overlap(sB, eB, sA, eA);
+            }
         }
     }
 
