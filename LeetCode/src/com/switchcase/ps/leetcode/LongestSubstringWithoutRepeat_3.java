@@ -11,25 +11,29 @@ import java.util.stream.Collectors;
  */
 public class LongestSubstringWithoutRepeat_3 {
 
-    static class Solution {
-
+    class Solution {
         public int lengthOfLongestSubstring(String s) {
-            Map<Character, Integer> map = new HashMap<>();
-            int longest = 0;
-            int i, j;
-            for (i = 0, j = 0; j < s.length(); j++) {
-                if (map.containsKey(s.charAt(j)) && map.get(s.charAt(j)) >= i) {
-                    longest = Math.max(longest, j - i);
-                    i = map.get(s.charAt(j)) + 1;
-                    map.put(s.charAt(j), j);
+            int start = 0; //start is sure.
+            int end = 0; // end is not sure;
+            Set<Character> used = new HashSet<>();
+            int ans = 0, best = 0;
+            int curr = 0;
+
+            while(curr < s.length()) {
+                Character khar = s.charAt(curr);
+                if (used.contains(khar)) {
+                    used.remove(s.charAt(start));
+                    start++;
+                    ans--;
                 } else {
-                    map.put(s.charAt(j), j);
+                    ans++;
+                    used.add(khar);
+                    curr++;
+                    best = Math.max(best, ans);
                 }
             }
-            longest = Math.max(longest, j - i);
-            return longest;
+            return best;
         }
-
     }
 
     static class SolutionPassesNonOptimal {
@@ -66,24 +70,6 @@ public class LongestSubstringWithoutRepeat_3 {
             } else {
                 return (dp[startPos] = "" + s.charAt(startPos) + longest);
             }
-        }
-    }
-
-    public static void main(String[] args) {
-        String[] cases = {
-                "abcb", //3
-                "cdd", //2
-                "abcabcbb", //3
-                "bbbbb", //1
-                "", //0
-                "pwwkew", //3
-                "a", //1
-                "asdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtygasdaasfwy5uj6uwb45tgrefawerc3w5y3w64uw456tgrafREgwv4g7u8bwerw3t3y53jioeahjorgihaerhtyg", //13
-                "dvdf" //3
-         };
-
-        for (String s : cases) {
-            System.out.println("Case: " + s + " : " + new Solution().lengthOfLongestSubstring(s));
         }
     }
 }

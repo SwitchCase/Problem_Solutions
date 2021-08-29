@@ -27,48 +27,45 @@ public class KthLargestElement215 {
     }
 
     static class Solution {
+        Random random = new Random();
 
-        Random rand = new Random();
         public int findKthLargest(int[] nums, int k) {
-            int lo = 0;
-            int hi = nums.length;
-            int lookingFor = nums.length - k ;
-            while(lo < hi) {
-                int pos = partition(nums, lo, hi);
-                if (pos == lookingFor) {
-                    return nums[pos];
-                }
-                if (pos < lookingFor) {
-                    lo = pos + 1;
+            int idx = solve(nums, nums.length - k, 0, nums.length - 1);
+            return nums[idx];
+        }
+
+        private int solve(int[] nums, int k, int sIdx, int eIdx) {
+            int lo = partition(nums, sIdx, eIdx);
+            if (k == lo) return lo;
+            if (k < lo) {
+                return solve(nums, k, sIdx, lo - 1);
+            } else {
+                return solve(nums, k, lo + 1, eIdx);
+            }
+        }
+
+        //sIdx and eIdx are inclusive.
+        private int partition(int[] nums, int sIdx, int eIdx) {
+            int rIdx = random.nextInt(eIdx - sIdx + 1) + sIdx;
+            int pivot = nums[rIdx];
+            swap(nums, rIdx, eIdx);
+            int lo = sIdx, hi = eIdx - 1;
+            while (lo <= hi) {
+                if (nums[lo] > pivot) {
+                    swap(nums, lo, hi);
+                    hi--;
                 } else {
-                    hi = pos;
+                    lo++;
                 }
             }
-            return nums[lo];
+            swap(nums, lo, eIdx);
+            return lo;
         }
 
-        //returns position of pivot
-        //lo inclusive, hi not inclusive.
-        //random makes a big diff here otherwise there are specific cases that can make the algo behave inefficiently.
-        private int partition(int[] nums, int lo, int hi) {
-            int pivPos = rand.nextInt(hi - lo) + lo;
-            swap(nums, pivPos, hi - 1);
-            int pivot = nums[hi - 1];
-            int i = lo;
-            for (int j = lo; j < hi; j++) {
-                if (nums[j] < pivot) {
-                    swap(nums, i, j);
-                    i++;
-                }
-            }
-            swap(nums, i, hi - 1);
-            return i;
-        }
-
-        private void swap(int[] nums, int a, int b) {
-            int tmp = nums[a];
-            nums[a] = nums[b];
-            nums[b] = tmp;
+        private void swap(int[] nums, int aIdx, int bIdx) {
+            int t = nums[aIdx];
+            nums[aIdx] = nums[bIdx];
+            nums[bIdx] = t;
         }
     }
 

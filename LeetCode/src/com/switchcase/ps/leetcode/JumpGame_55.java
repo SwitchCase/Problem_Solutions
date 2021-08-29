@@ -11,20 +11,12 @@ import java.util.Set;
 public class JumpGame_55 {
     class Solution {
         public boolean canJump(int[] nums) {
-            int n = nums.length - 1;
-            if (n == 0) return true;
-            int last = 1000000;
-            for (int i = n - 1; i >= 0; i--) {
-                int num = nums[i];
-                //directly reachable.
-                if (num >= n - i) {
-                    last = i;
-                } else if (num >= last - i) { //indirectly reachable.
-                    last = i;
-                }
+            int reach = 0;
+            for (int i = 0; i<nums.length; i++) {
+                if (i > reach) return false;
+                reach = Math.max(reach, i + nums[i]);
             }
-            if (last == 0) return true;
-            return false;
+            return true;
         }
     }
 

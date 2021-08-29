@@ -5,35 +5,34 @@ import java.util.Map;
 
 public class CoinChange_322 {
 
-    static class Solution {
-        Map<Integer, Integer> dp = new HashMap<>();
+     class Solution {
+
+        private Map<Integer, Integer> dp = new HashMap<>();
+
         public int coinChange(int[] coins, int amount) {
-            if (amount == 0) return 0;
-            recurse(coins, amount);
-            int ans = dp.getOrDefault(amount, -1);
-            if (ans == 10000000) {
+            dp.clear();
+            dp.put(0,0);
+            int ans = recurse(coins, amount);
+            if (ans >= 100000000) {
                 return -1;
             }
             return ans;
         }
 
         private int recurse(int[] coins, int amount) {
-            if (dp.containsKey(amount)) return dp.get(amount);
-            int ans = 10000000;
+            if (amount < 0) {
+                return 100000000;
+            }
+            if (dp.containsKey(amount)) {
+                return dp.get(amount);
+            }
+
+            int ans = Integer.MAX_VALUE;
             for (int i = 0; i < coins.length; i++) {
-                int newA = amount - coins[i];
-                if (newA > 0 ) {
-                    ans = Math.min(ans, 1 + recurse(coins, newA));
-                } else if (newA == 0) {
-                    ans = Math.min(ans, 1);
-                }
+                ans = Math.min(ans, 1 + recurse(coins, amount - coins[i]));
             }
             dp.put(amount, ans);
             return ans;
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Solution().coinChange(new int[] {1, 2, 5}, 11));
     }
 }
