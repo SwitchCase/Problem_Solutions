@@ -7,43 +7,36 @@ import java.util.*;
  */
 public class WordBreakII_140 {
     class Solution {
-        private Map<String, List<List<String>>> memoize = new HashMap<>();
+
+        private Map<String, List<String>> cache = new HashMap<>();
+
         public List<String> wordBreak(String s, List<String> wordDict) {
-            Set<String> dict = new HashSet<>(wordDict);
-            List<List<String>> ans = recurse(s, dict);
-            List<String> result = new ArrayList<>();
-            for (List<String> soln : ans) {
-                result.add(String.join(" ", soln));
-            }
-            return result;
+            cache.put("", Arrays.asList(""));
+            return recurse(s, new HashSet<>(wordDict));
         }
 
-        private List<List<String>> recurse(String rem, Set<String> dict) {
-            if (rem.length() == 0) {
-                return Collections.emptyList();
+        private List<String> recurse(String s, Set<String> dict) {
+            if (cache.containsKey(s)) {
+                return cache.get(s);
             }
-            if (memoize.containsKey(rem)) {
-                return memoize.get(rem);
-            }
-            List<List<String>> ans = new ArrayList<>();
-            for (int i = 1; i < rem.length(); i++) {
-                String pre = rem.substring(0, i);
-                String suff = rem.substring(i);
-                if (dict.contains(pre)) {
-                    List<List<String>> subSolution = recurse(suff, dict);
-                    for (List<String> soln : subSolution) {
-                        List<String> copy = new ArrayList<>();
-                        copy.add(pre);
-                        copy.addAll(soln);
-                        ans.add(copy);
-                    }
+            List<String> ans = new ArrayList<>();
+
+            for (int i = 0; i < s.length(); i++) {
+                String substr = s.substring(0, i+1);
+                String rem = s.substring(i+1);
+                if (dict.contains(substr)) {
+                    recurse(rem, dict).stream()
+                            .map(x -> {
+                                if (x.equals("")) {
+                                    return substr;
+                                } else {
+                                    return substr + " " + x;
+                                }
+                            })
+                            .forEach(ans::add);
                 }
             }
-            if (dict.contains(rem)) {
-                ans.add(Arrays.asList(rem));
-            }
-
-            memoize.put(rem, ans);
+            cache.put(s, ans);
             return ans;
         }
     }

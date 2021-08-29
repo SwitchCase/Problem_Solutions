@@ -8,29 +8,22 @@ import java.util.Arrays;
 public class FirstMissingPositive41 {
     static class Solution {
         public int firstMissingPositive(int[] nums) {
-            int n = nums.length;
-            if (n == 0) return 1;
-            int k = n + 1;
-            for (int i = 0; i < n; i++) nums[i]--;
-
-            for (int i = 0; i < n; i++) {
-                while (nums[i] >= 0 && nums[i] < n && nums[i] != i && nums[i] != nums[nums[i]]) {
-                    swap(nums, i, nums[i]);
+            for (int i = 0; i < nums.length; i++) {
+                if (nums[i] <= 0 || nums[i] > nums.length) continue;
+                int v = nums[i] - 1;
+                while (v >= 0 && v < nums.length && nums[v] != v + 1) {
+                    int t = nums[v];
+                    nums[v] = v + 1;
+                    v = t - 1;
                 }
             }
-            int i = 0;
-            for (; i < n; i++) {
-                if(nums[i] != i) {
-                    return i + 1;
+            int ans = 1;
+            for (;ans <= nums.length; ans++) {
+                if(nums[ans - 1] != ans) {
+                    return ans;
                 }
             }
-            return i+1;
-        }
-
-        private void swap(int[] nums, int i, int j) {
-            nums[i] ^= nums[j];
-            nums[j] ^= nums[i];
-            nums[i] ^= nums[j];
+            return ans;
         }
     }
 
