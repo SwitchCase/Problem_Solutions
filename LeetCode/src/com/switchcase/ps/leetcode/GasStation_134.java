@@ -1,52 +1,42 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 /**
  * https://leetcode.com/problems/gas-station/
  */
 public class GasStation_134 {
 
-    static class Solution {
+    class Solution {
         public int canCompleteCircuit(int[] gas, int[] cost) {
-            int[] deltas = new int[gas.length];
-            int total = 0;
-            int maxDelta = Integer.MIN_VALUE, maxDeltaPos = 0;
-            List<int[]> deltaLst = new ArrayList<>();
-            for (int i = 0; i < gas.length; i++) {
-                deltas[i] = gas[i] - cost[i];
-                total += deltas[i];
-                if (maxDelta < deltas[i]) {
-                    maxDelta = deltas[i];
-                    maxDeltaPos = i;
-                }
-                if (deltas[i] > 0)
-                    deltaLst.add(new int[]{deltas[i], i});
+            int N = gas.length;
+            int[][] delta = new int[N][2];
+            for (int i = 0; i < N; i++) {
+                delta[i][0] = cost[i] - gas[i];
+                delta[i][1] = i;
             }
-            if (total < 0) return -1;
-
-            Collections.sort(deltaLst, (int[] a, int[] b) -> b[0] - a[0]);
-
-            for (int i = 0; i < deltaLst.size(); i++) {
-                if (check(gas, cost, deltaLst.get(i)[1])) {
-                    return deltaLst.get(i)[1];
+            Arrays.sort(delta, Comparator.comparingInt(array -> array[0]));
+            for (int i = 0; i < delta.length; i++) {
+                if (delta[i][0] <= 0) {
+                    if (check(gas, cost, delta[i][1])) {
+                        return delta[i][1];
+                    }
+                } else {
+                    break;
                 }
             }
             return -1;
         }
 
         private boolean check(int[] gas, int[] cost, int start) {
-            int rem = 0;
-            int n = gas.length;
-            for (int i = 0; i < n; i++) {
-                int pos = (start + i) % n;
-                int delta = rem + gas[pos] - cost[pos];
-                if (delta < 0) {
+            int fuel = 0;
+            for (int i = start; i < start + gas.length; i++) {
+                int idx = i % gas.length;
+                if (fuel + gas[idx] >= cost[idx]) {
+                    fuel = fuel + gas[idx] - cost[idx];
+                } else {
                     return false;
                 }
-                rem = delta;
             }
             return true;
         }
