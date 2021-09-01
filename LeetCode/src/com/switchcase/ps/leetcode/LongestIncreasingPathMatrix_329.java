@@ -3,47 +3,42 @@ package com.switchcase.ps.leetcode;
 public class LongestIncreasingPathMatrix_329 {
     class Solution {
         public int longestIncreasingPath(int[][] matrix) {
-            if (matrix.length == 0) return 0;
-            int n = matrix.length;
-            int m = matrix[0].length;
-            int[][] soln = new int[n][m];
+            int N = matrix.length;
+            int M = matrix[0].length;
 
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
-                    soln[i][j] = -1;
+            int[][] ans = new int[N][M];
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++)
+                    ans[i][j] = -1;
+            }
+            int result = 0;
+            for (int i = 0; i < N; i++) {
+                for (int j = 0; j < M; j++) {
+                    result = Math.max(result, recurse(matrix, N, M, ans, i, j));
                 }
             }
-            int ans = 0;
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < m; j++) {
-                    if (soln[i][j] == -1) {
-                        ans = Math.max(ans, recurse(soln, matrix, i, j, n, m));
-                    }
-                }
-            }
-            return ans;
+            return result;
         }
 
-        private int recurse(int[][] soln, int[][] matrix, int i, int j, int N, int M) {
-            if (soln[i][j] != -1) {
-                return soln[i][j];
+        private int recurse(int[][] matrix, int N, int M, int[][] ans, int sN, int sM) {
+            if (ans[sN][sM] != -1) {
+                return ans[sN][sM];
             }
-            int n = matrix[i][j];
-            int[] dn = {0, 0, 1, -1};
-            int[] dm = {-1, 1, 0, 0};
-            int ans = 1;
-            for (int d = 0; d < 4; d++) {
-                int di = i + dn[d];
-                int dj = j + dm[d];
-                if (di >=0 && dj >=0 && di < N && dj < M) {
-                    int m = matrix[di][dj];
-                    if ( m > n) {
-                        ans = Math.max(ans, 1 + recurse(soln, matrix, di, dj, N, M));
+            int result = 1;
+            int[] dN = {0, 0, -1, 1};
+            int[] dM = {-1, 1, 0, 0};
+
+            for (int i = 0; i < 4; i++) {
+                int nn = sN + dN[i];
+                int mm = sM + dM[i];
+                if (nn >= 0 && nn < N && mm >=0 && mm < M) {
+                    if (matrix[nn][mm] > matrix[sN][sM]) {
+                        result = Math.max(result, 1 + recurse(matrix, N, M, ans, nn, mm));
                     }
                 }
             }
-            soln[i][j] = ans;
-            return ans;
+            ans[sN][sM] = result;
+            return result;
         }
     }
 }
