@@ -13,13 +13,17 @@ public class FirstBadVersion_278 {
         }
 
         public int firstBadVersion(int n) {
-            int lo = 0, hi = n;
+            long lo = 1, hi = 1L * n + 1;
             while (lo < hi) {
-                int mid = lo + (hi - lo)/2;
-                if(isBadVersion(mid)) hi = mid;
-                else lo = mid + 1;
+                long mid = (lo + hi)/2;
+                if (isBadVersion((int) mid)) {
+                    hi = mid;
+                } else {
+                    lo = mid + 1;
+                }
             }
-            return lo;
+            if (isBadVersion((int) lo)) return (int) lo;
+            return -1;
         }
     }
 
@@ -36,7 +40,8 @@ public class FirstBadVersion_278 {
     }
 
     public static void main(String[] args) {
-        int[][] kases = new int[][]{ {10, 4}, {1000, 1}, {1000, 1000}, {1, 0}};
+        int[][] kases = new int[][]{ {2147483647,2147483647}, {10, 4}, {1000, 1}, {1000, 1000}, {1, 0},
+        };
         for (int i = 0; i < kases.length; i++) {
             System.out.println("For Case: " + Arrays.toString(kases[i]) + " ans = " + new Solution(kases[i][1]).firstBadVersion(kases[i][0]));
         }

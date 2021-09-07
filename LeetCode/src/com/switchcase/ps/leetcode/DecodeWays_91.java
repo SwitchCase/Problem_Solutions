@@ -1,45 +1,45 @@
 package com.switchcase.ps.leetcode;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * https://leetcode.com/problems/decode-ways/
  */
 public class DecodeWays_91 {
-    static class Solution {
-        private static final int LARGEST = 26;
-        int[] dp;
+    class Solution {
+
+        Set<String> dict = new HashSet<>();
+        int[] dp = new int[150];
+
         public int numDecodings(String s) {
-            dp = new int[s.length()];
+            for (int i = 1; i <= 26; i++) {
+                dict.add(Integer.toString(i));
+            }
             Arrays.fill(dp, -1);
-            return calculate(s, 0);
+            return recurse(s, 0);
         }
 
-        int calculate(String s, int startPos) {
-            if (dp[startPos] != -1) {
-                return dp[startPos];
+        public int recurse(String str, int sIdx) {
+            if (sIdx >= str.length()) {
+                return 1;
             }
-
-            if (s.charAt(startPos) == '0') {
-                return 0;
+            if (dp[sIdx] != -1) {
+                return dp[sIdx];
             }
-
             int ans = 0;
-            int first = s.charAt(startPos) - '0';
-            if (startPos < s.length() - 1) {
-                int first2 = (s.charAt(startPos) - '0') * 10 + (s.charAt(startPos + 1) - '0');
-                if (first2 <= LARGEST && first2 > 0) {
-                    if (startPos + 2 < s.length()) {
-                        ans += calculate(s, startPos + 2);
-                    } else ans += 1;
+
+            for (int i = sIdx; i < str.length(); i++) {
+                String sub = str.substring(sIdx, i + 1);
+                if (dict.contains(sub)) {
+                    ans += recurse(str, i + 1);
+                } else {
+                    break;
                 }
             }
-            if (first > 0 && first <= LARGEST) {
-                if (startPos + 1 < s.length()) {
-                    ans += calculate(s, startPos + 1);
-                } else ans++;
-            }
-            return dp[startPos] = ans;
+            dp[sIdx] = ans;
+            return ans;
         }
     }
 
@@ -57,7 +57,7 @@ public class DecodeWays_91 {
                 "226"
         };
         for (int i = 0; i < kases.length; i++) {
-            System.out.println("For Case: " + kases[i] + " ans = " + new Solution().numDecodings(kases[i]));
+            //System.out.println("For Case: " + kases[i] + " ans = " + new Solution().numDecodings(kases[i]));
         }
     }
 

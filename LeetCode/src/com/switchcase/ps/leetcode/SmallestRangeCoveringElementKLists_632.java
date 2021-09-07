@@ -9,46 +9,74 @@ public class SmallestRangeCoveringElementKLists_632 {
 
     static class Solution {
         public int[] smallestRange(List<List<Integer>> nums) {
+            int N = nums.stream().mapToInt(lst -> lst.size()).sum();
             int K = nums.size();
+            int[][] array = new int[N][2];
+            int idx = 0;
             PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt((int[] a) -> a[0]));
-            int maxNum = nums.stream().flatMap(l -> l.stream()).mapToInt(x -> x).max().getAsInt();
-            int minNum = nums.stream().flatMap(l -> l.stream()).mapToInt(x -> x).min().getAsInt();
-            int max = Integer.MIN_VALUE;
-            for (int i = 0; i < nums.size(); i++) {
-                if (nums.get(i).size() > 0) {
-                    pq.add(new int[]{nums.get(i).get(0), i});
-                    max = Math.max(max, nums.get(i).get(0));
-                } else {
-                    return new int[]{minNum, maxNum};
+            for (int i = 0; i < K; i++) {
+                pq.add(new int[] {nums.get(i).get(0), i});
+            }
+            int[] numsIdx = new int[K];
+            Arrays.fill(numsIdx, 0);
+
+            while (!pq.isEmpty()) {
+                int[] smallest = pq.poll();
+                array[idx++] = smallest; // smallest[0] -> number, smallest[1] -> index of list from where the number came.
+                numsIdx[smallest[1]]++; //increment nums[x]
+                if (numsIdx[smallest[1]] < nums.get(smallest[1]).size()) {
+                    pq.add(new int[]{nums.get(smallest[1]).get(numsIdx[smallest[1]]), smallest[1]});
                 }
             }
 
-            int[] doneP = new int[K];
-            Arrays.fill(doneP, 0);
+            int[] satisfied = new int[K];
+            Arrays.fill(satisfied, 0);
+            int start = 0, end = 0;
+            int[] ans = new int[2];
+            int best = Integer.MAX_VALUE;
+            int satCount = 0;
 
-            int range = Integer.MAX_VALUE;
-            int bl = -1, br = -1;
-            //merge K lists:
-            while(true) {
-                int[] record = pq.poll();
-                if (max - record[0] < range) {
-                    range = max - record[0];
-                    bl = record[0];
-                    br = max;
-                }
-                int idx = record[1];
-                if (doneP[idx] + 1 < nums.get(idx).size()) {
-                    int val = nums.get(idx).get(doneP[idx] + 1);
-                    pq.add(new int[]{val, idx});
-                    doneP[idx]++;
-                    if (max < val) {
-                        max = val;
+            while (true) {
+                while (end < N) {
+                    int[] curr = array[end];
+                    if (satisfied[curr[1]] == 0) {
+                        satisfied[curr[1]]++;
+                        satCount++;
+                    } else {
+                        satisfied[curr[1]]++;
                     }
-                } else {
-                    break;
+                    end++;
+                    if (satCount == K) {
+                        int currB = array[end-1][0] - array[start][0] + 1;
+                        if (currB < best) {
+                            best = currB;
+                            ans = new int[]{array[start][0], array[end-1][0]};
+                        }
+                        break;
+                    }
                 }
+                while (start < N) {
+                    int[] curr = array[start];
+                    if (satisfied[curr[1]] == 1) {
+                        satisfied[curr[1]]--;
+                        satCount--;
+                    } else {
+                        satisfied[curr[1]]--;
+                    }
+                    start++;
+                    if (satCount < K) {
+                        break;
+                    } else {
+                        int currB = array[end-1][0] - array[start][0] + 1;
+                        if (currB < best) {
+                            best = currB;
+                            ans = new int[]{array[start][0], array[end-1][0]};
+                        }
+                    }
+                }
+                if (end >= N) break;
             }
-            return new int[] {bl, br};
+            return ans;
         }
     }
 

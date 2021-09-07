@@ -9,51 +9,88 @@ public class WordLadderII_126 {
 
     //1137 ms
     static class Solution {
+
         static class State {
-            private final int distance;
-            private final String word;
-            private final ArrayList<String> path;
-            State(int distance, String word, ArrayList<String> path) {
-                this.distance = distance;
+            String word;
+            int length;
+            List<String> path;
+
+            State(String word, int length, List<String> path) {
                 this.word = word;
+                this.length = length;
                 this.path = path;
             }
         }
 
+
         public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
-            Set<String> seen = new HashSet<>();
-            List<List<String>> res = new ArrayList<>();
-            Set<String> words = new HashSet<>(wordList);
-
             Queue<State> queue = new ArrayDeque<>();
-            ArrayList<String> arrayList = new ArrayList<>();
-            arrayList.add(beginWord);
-            queue.add(new State(0, beginWord, arrayList));
+            queue.add(new State(beginWord, 1, Arrays.asList(beginWord)));
+            wordList.add(beginWord);
+            List<List<String>> ans = new ArrayList<>();
+            Map<String, Set<String>> adjList = getAdj(wordList);
 
-            int shortest = -1;
+            int bestLength = -1;
+            Set<String> visited = new HashSet<>();
+            visited.add(beginWord);
 
-            while(!queue.isEmpty()) {
-                State curr = queue.poll();
-                seen.add(curr.word);
-                for (int i = 0; i < endWord.length(); i++) {
-                    StringBuilder sb = new StringBuilder(curr.word);
+            while (!queue.isEmpty()) {
+                State top = queue.poll();
+                Set<String> pathWords = new HashSet<>(top.path);
+                if (endWord.equals(top.word)) {
+                    if (bestLength == -1) {
+                        bestLength = top.length;
+                        ans.add(top.path);
+                    } else {
+                        if (top.length == bestLength) {
+                            ans.add(top.path);
+                        }
+                    }
+                } else {
+                    if ( (bestLength != -1 && top.length > bestLength) || top.length >= wordList.size()) {
+                        break;
+                    }
+                    for (String nextWord : adjList.getOrDefault(top.word, new HashSet<>())) {
+                        if (pathWords.contains(nextWord) || visited.contains(nextWord)) {
+                            continue;
+                        }
+                        List<String> path = new ArrayList<>(top.path);
+                        path.add(nextWord);
+                        State newState = new State(nextWord, top.length + 1, path);
+                        queue.add(newState);
+                    }
+                }
+                visited.add(top.word);
+            }
+            return ans;
+        }
+
+        private Map<String, Set<String>> getAdj(List<String> wordList) {
+
+            Set<String> dict = new HashSet<>(wordList);
+            Map<String, Set<String>> ans = new HashMap<>();
+
+            for (String word : wordList) {
+                ans.put(word, new HashSet<>());
+                for (int i = 0; i < word.length(); i++) {
                     for (char c = 'a'; c <= 'z'; c++) {
-                        sb.setCharAt(i, c);
-                        String newW = sb.toString();
-                        if (newW.equals(endWord)  && words.contains(endWord) && (shortest == -1 || shortest == curr.distance + 1)) {
-                            shortest = curr.distance + 1;
-                            ArrayList<String> lst = new ArrayList<>(curr.path);
-                            lst.add(newW);
-                            res.add(lst);
-                        } else if (words.contains(newW) && !seen.contains(newW) && shortest == -1) {
-                            ArrayList<String> lst = new ArrayList<>(curr.path);
-                            lst.add(newW);
-                            queue.add(new State(curr.distance + 1, newW, lst));
+                        String newWord = getWord(word, c,i);
+                        if (dict.contains(newWord) && !newWord.equals(word)) {
+                            ans.get(word).add(newWord);
                         }
                     }
                 }
             }
-            return res;
+            return ans;
+        }
+
+        private String getWord(String word, char c, int i) {
+            if (i == 0) {
+                return c + word.substring(i + 1);
+            } else if (i == word.length() - 1) {
+                return word.substring(0, i) + c;
+            } else return word.substring(0, i) + c + word.substring(i + 1);
+
         }
     }
 
