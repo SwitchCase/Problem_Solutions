@@ -1,13 +1,13 @@
 package com.switchcase.ps.leetcode;
 
 import java.util.ArrayDeque;
-import java.util.Arrays;
+import java.util.Deque;
 
 /**
  * https://leetcode.com/problems/sliding-window-maximum/
  */
 public class SlidingWindowMax {
-    static class Solution {
+    class SolutionDP {
         public int[] maxSlidingWindow(int[] nums, int k) {
             if (k == 1 || nums.length == 0) return nums;
             if (k == 0) return new int[0];
@@ -31,28 +31,28 @@ public class SlidingWindowMax {
         }
     }
 
-    static class Solution3 {
+    class Solution {
         public int[] maxSlidingWindow(int[] a, int k) {
             if (a == null || k <= 0) return new int[0];
-            int[] res = new int[a.length - k + 1];
-            ArrayDeque<Integer> deque = new ArrayDeque<Integer>();
+            int[] ans = new int[a.length - k + 1];
+            Deque<Integer> deque = new ArrayDeque<>();
             for (int i = 0; i < a.length; i++) {
+                //first is oldest and largest.
+
                 while(!deque.isEmpty() && deque.peekFirst() < i - k + 1) {
                     deque.pollFirst();
                 }
-                while(!deque.isEmpty() && a[deque.peekLast()] < a[i]) {
+
+                while(!deque.isEmpty() && a[deque.peekLast()] <= a[i]) {
                     deque.pollLast();
                 }
                 deque.offerLast(i);
-                if (i >= k - 1) {
-                    res[i-k+1] = a[deque.peekFirst()];
+                if (i - k + 1 >= 0) {
+                    ans[i - k + 1] = a[deque.peekFirst()];
                 }
             }
-            return res;
-        }
-    }
+            return ans;
 
-    public static void main(String[] args) {
-        System.out.println(Arrays.toString(new Solution3().maxSlidingWindow(new int[] {1, 3, -1, -3, 5, 3,6, 7},  3)));
+        }
     }
 }

@@ -1,9 +1,6 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.IntStream;
 
 public class SplitArrayIntoConsSeq_659 {
@@ -65,43 +62,44 @@ public class SplitArrayIntoConsSeq_659 {
     }
 
 
-    static class Solution {
+    class Solution {
         public boolean isPossible(int[] nums) {
-            Map<Integer, Integer> ends = new HashMap<>();
+            //simulate.
             Map<Integer, Integer> counts = new HashMap<>();
-            for (int n : nums) {
-                counts.putIfAbsent(n, 0);
-                counts.put(n, counts.get(n) + 1);
+            for (int num :nums) {
+                counts.put(num, counts.getOrDefault(num, 0) + 1);
             }
-            for (int i = 0; i < nums.length; i++) {
-                int v = nums[i];
-                if (counts.getOrDefault(v, 0) == 0 ) continue;
-                if (ends.getOrDefault(v - 1, 0) > 0) {
-                    ends.put(v - 1, ends.get(v - 1)  - 1);
-                    ends.putIfAbsent(v, 0);
-                    ends.put(v, ends.get(v) + 1);
-                    counts.put(v, counts.get(v) - 1);
-                } else {
-                    if (counts.getOrDefault(v + 1, 0) > 0 && counts.getOrDefault(v + 2, 0) > 0) {
-                        ends.putIfAbsent(v + 2, 0);
-                        ends.put(v + 2, ends.get(v + 2) + 1);
-                        counts.put(v, counts.get(v) - 1);
-                        counts.put(v + 1, counts.get(v + 1) - 1);
-                        counts.put(v + 2, counts.get(v + 2) - 1);
-                    } else {
-                        return false;
+            List<Integer> uniq = new ArrayList<>(counts.keySet());
+            uniq.sort(Comparator.naturalOrder());
+
+            List<List<Integer>> sequences = new ArrayList<>();
+            for (int i = 0; i < uniq.size(); i++) {
+                int first = uniq.get(i);
+                if (counts.get(first) > 0) {
+                    //first needs a new home.
+                    for (int j = 0; j < sequences.size(); j++) {
+                        if (sequences.get(j).get(sequences.get(j).size() - 1) == first - 1 && counts.get(first) > 0) {
+                            sequences.get(j).add(first);
+                            counts.put(first, counts.get(first) -1 );
+                        }
                     }
+                }
+                while (counts.getOrDefault(first, 0) > 0
+                        && counts.getOrDefault(first + 1, 0) > 0
+                        && counts.getOrDefault(first + 2, 0) > 0) {
+                    List<Integer> seq = new ArrayList<>();
+                    seq.add(first);seq.add(first + 1); seq.add(first + 2);
+                    sequences.add(seq);
+                    counts.put(first, counts.get(first) - 1);
+                    counts.put(first + 1, counts.get(first + 1) - 1);
+                    counts.put(first + 2, counts.get(first + 2) - 1);
+                }
+
+                if (counts.get(first) > 0) {
+                    return false;
                 }
             }
             return true;
         }
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new Solution().isPossible(new int[]{4,5,6,7,7,8,8,9,10,11}));
-        System.out.println(new Solution().isPossible(new int[]{2,3,9,10,10,11,11,12,13,14}));
-        System.out.println(new Solution().isPossible(new int[]{1, 1, 2, 2, 3, 3, 4, 5, 5, 6, 6, 7, 7, 7, 8, 8, 9}));
-        System.out.println(new Solution().isPossible(new int[]{1, 2, 3, 4}));
-        System.out.println(new Solution().isPossible(new int[]{1, 2, 5, 6, 7}));
     }
 }
