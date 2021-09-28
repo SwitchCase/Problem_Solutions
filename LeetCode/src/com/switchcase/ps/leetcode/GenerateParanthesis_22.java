@@ -7,21 +7,22 @@ public class GenerateParanthesis_22 {
 
     class Solution {
         public List<String> generateParenthesis(int n) {
-            List<String> out = new ArrayList<>();
-            recurse("", n, 0, 0, out);
-            return out;
+            List<String> ans = new ArrayList<>();
+            recurse(n, 0, 0, 0, "", ans);
+            return ans;
         }
 
-        private void recurse(String soFar, int n, int open, int close, List<String> out) {
-            if (open == close && open == n) {
-                out.add(soFar);
+        private void recurse(int n, int open, int closed, int done, String sofar, List<String> out) {
+            if (done == 2 * n) {
+                out.add(sofar);
                 return;
             }
+
             if (open < n) {
-                recurse(soFar + "(", n, open + 1, close, out);
+                recurse(n, open + 1, closed, done + 1, sofar + "(", out);
             }
-            if (open > close) {
-                recurse(soFar + ")", n, open, close + 1, out);
+            if (open > closed) {
+                recurse(n, open, closed + 1, done + 1, sofar + ")", out);
             }
         }
     }

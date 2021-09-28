@@ -2,29 +2,28 @@ package com.switchcase.ps.leetcode;
 
 public class PalindromicSubstring_647 {
 
-    static class Solution {
+    class Solution {
         public int countSubstrings(String s) {
-
+            int ans = s.length();
             char[] array = s.toCharArray();
 
-            int ans = 0;
-            for (int i = 0; i < s.length(); i++) {
-                ans +=1;
-                int j = 1;
+            for (int i = 0; i < array.length; i++) {
                 //odd
-                while (i + j < s.length() && i - j >= 0) {
-                    if (array[i+j] == array[i - j]) ans++;
-                    else break;
-                    j++;
+                for (int j = i - 1, k = i + 1; j>=0 && k < s.length(); j--,k++) {
+                    if (array[j] == array[k]) {
+                        ans++;
+                    } else {
+                        break;
+                    }
                 }
-                j = 1;
-                //even:
-                if (i+j < s.length() && array[i+j] == array[i]) {
-                    int k = 0;
-                    while(i-k >=0 && i+j+k <s.length()) {
-                        if(array[i-k] == array[i+j+k]) ans++;
-                        else break;
-                        k++;
+
+                //even
+
+                for (int j = i - 1, k = i; j >= 0 && k < s.length(); j--,k++) {
+                    if (array[j] == array[k]) {
+                        ans++;
+                    } else {
+                        break;
                     }
                 }
             }
