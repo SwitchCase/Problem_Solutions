@@ -1,73 +1,73 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.PriorityQueue;
+import java.util.Comparator;
+import java.util.TreeSet;
 
 public class ExamRoom_855 {
 
-    static class ExamRoom {
+    class ExamRoom {
 
-        PriorityQueue<Interval> pq;
+        TreeSet<Interval> pq;
+        TreeSet<Integer> taken;
         int N;
 
         class Interval {
-            int s, e, dist;
-            Interval(int s, int e) {
-                this.s = s;
-                this.e = e;
-                if (s == -1) {
-                    this.dist = e;
-                } else if (e == N) {
-                    this.dist = N - 1 - s;
+
+            int start, end;
+            int nextSeatDist; //dist from start for the next seat.
+
+            //end is non inclusive.
+            Interval(int start, int end) {
+                this.start = start;
+                this.end = end;
+                if (start == -1) {
+                    this.nextSeatDist = end;
+                } else if (end == N) {
+                    this.nextSeatDist = N - 1 - start;
                 } else {
-                    this.dist = (e - s)/2;
+                    this.nextSeatDist = (end - start) / 2;
                 }
+            }
+
+            // this is for TreeSet remove (Object o) method.
+            public boolean equals(Interval i) {
+                return this.start == i.start && this.end == i.end;
             }
         }
 
         public ExamRoom(int N) {
+            this.pq = new TreeSet<>(Comparator.comparing((Interval i) -> i.nextSeatDist).reversed()
+                    .thenComparing(i -> i.start));
+            this.taken = new TreeSet<>();
+            this.pq.add(new Interval(-1, N));
             this.N = N;
-            this.pq = new PriorityQueue<>((Interval a, Interval b) -> a.dist != b.dist ? b.dist - a.dist : Integer.compare(a.s, b.s));
-            pq.add(new Interval(-1, N));
         }
 
         public int seat() {
-            Interval interval = pq.poll();
+            Interval top = pq.pollFirst();
             int seat;
-            if (interval.s == -1) {
+            if (top.start == -1) {
                 seat = 0;
-            } else if (interval.e == this.N) {
+                pq.add(new Interval(seat, top.end));
+            } else if (top.end == N) {
                 seat = N - 1;
+                pq.add(new Interval(top.start, seat));
             } else {
-                seat = (interval.e + interval.s) / 2;
+                seat = (top.end + top.start) / 2;
+                pq.add(new Interval(top.start, seat));
+                pq.add(new Interval(seat, top.end));
             }
-            pq.add(new Interval(interval.s, seat));
-            pq.add(new Interval(seat, interval.e));
-
+            taken.add(seat);
             return seat;
         }
 
         public void leave(int p) {
-            Interval start = null;
-            Interval end = null;
-            for (Interval interval : pq) {
-                if (interval.e == p) {
-                    start = interval;
-                }
-                if (interval.s == p) {
-                    end = interval;
-                }
-            }
-            pq.remove(start);
-            pq.remove(end);
-            pq.add(new Interval(start.s, end.e));
+            int s = taken.lower(p) == null ? -1 : taken.lower(p);
+            int e = taken.higher(p) == null ? N : taken.higher(p);
+            pq.remove(new Interval(s, p));
+            pq.remove(new Interval(p, e));
+            pq.add(new Interval(s, e));
+            taken.remove(p);
         }
     }
-
-/**
- * Your ExamRoom object will be instantiated and called as such:
- * ExamRoom obj = new ExamRoom(N);
- * int param_1 = obj.seat();
- * obj.leave(p);
- */
-
 }

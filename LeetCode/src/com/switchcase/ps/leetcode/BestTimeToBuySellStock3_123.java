@@ -1,38 +1,40 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.Arrays;
-
 public class BestTimeToBuySellStock3_123 {
 
     static class Solution {
         public int maxProfit(int[] prices) {
+            int[] sProfit = new int[prices.length + 1];
+            int[] eProfit = new int[prices.length + 1];
 
-            if (prices.length == 0) return 0;
-            int[] sProfit = new int[prices.length];
-            int[] eProfit = new int[prices.length];
-
-            int ans = 0;
-            int mx = prices[0];
-            int b = 0;
-            sProfit[0] = 0;
+            int smallest = prices[0];
+            int best = 0;
+            sProfit[0] = best;
             for (int i = 1; i < prices.length; i++) {
-                b = Math.max(b, prices[i] - mx);
-                sProfit[i] = b;
-                ans = Math.max(ans, b);
-                mx = Math.min(mx, prices[i]);
-            }
-            mx = prices[prices.length - 1];
-            b = 0;
-            eProfit[prices.length-1] = 0;
-            for (int i = prices.length - 2; i >=0; i--) {
-                b = Math.max(b, mx - prices[i]);
-                eProfit[i] = b;
-                ans = Math.max(ans, b);
-                mx = Math.max(mx, prices[i]);
+                if (best < prices[i] - smallest) {
+                    best = prices[i] - smallest;
+                }
+                sProfit[i] = best;
+                if (smallest > prices[i]) {
+                    smallest = prices[i];
+                }
             }
 
-            for (int i = 1; i < prices.length - 2; i++) {
-                ans = Math.max(ans, sProfit[i] + eProfit[i + 1]);
+            int largest = prices[prices.length - 1];
+            best = 0;
+            eProfit[prices.length - 1] = best;
+            for (int i = prices.length - 2; i>=0; i--) {
+                if (best < largest - prices[i]) {
+                    best = largest - prices[i];
+                }
+                eProfit[i] = best;
+                if (largest < prices[i]) {
+                    largest = prices[i];
+                }
+            }
+            int ans = 0;
+            for (int i = 0; i < prices.length; i++) {
+                ans = Math.max(ans, sProfit[i] + eProfit[i+1]);
             }
             return ans;
         }

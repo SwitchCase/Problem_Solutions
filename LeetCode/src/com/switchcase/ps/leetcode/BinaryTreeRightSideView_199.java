@@ -1,9 +1,8 @@
 package com.switchcase.ps.leetcode;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 
 public class BinaryTreeRightSideView_199 {
 
@@ -18,36 +17,32 @@ public class BinaryTreeRightSideView_199 {
     }
 
     class Solution {
-
-        class QNode {
-            TreeNode node;
-            int level;
-            QNode(TreeNode node, int level) {
-                this.node = node;
-                this.level = level;
-            }
-        }
-
         public List<Integer> rightSideView(TreeNode root) {
             List<Integer> ans = new ArrayList<>();
+
             if (root == null) return ans;
-            Queue<QNode> queue = new ArrayDeque<>();
-            queue.add(new QNode(root, 0));
-            QNode last = new QNode(root, 0);
 
+            LinkedList<TreeNode> level0 = new LinkedList<>();
+            LinkedList<TreeNode> level1 = new LinkedList<>();
+            level1.add(root);
 
-
-            while(!queue.isEmpty()) {
-                QNode qn = queue.poll();
-                if (qn.level != last.level) {
-                    ans.add(last.node.val);
+            while(true) {
+                if (level0.isEmpty()) {
+                    if (level1.isEmpty()) {
+                        break;
+                    }
+                    ans.add(level1.getLast().val);
+                    level0 = level1;
+                    level1 = new LinkedList<>();
                 }
-                last = qn;
-                TreeNode node = qn.node;
-                if (node.left != null) queue.add(new QNode(node.left, qn.level + 1));
-                if (node.right != null) queue.add(new QNode(node.right, qn.level + 1));
+                TreeNode top = level0.pollFirst();
+                if (top.left != null) {
+                    level1.addLast(top.left);
+                }
+                if (top.right != null) {
+                    level1.addLast(top.right);
+                }
             }
-            ans.add(last.node.val);
             return ans;
         }
     }

@@ -1,66 +1,63 @@
 package com.switchcase.ps.leetcode;
 
-import java.awt.image.AreaAveragingScaleFilter;
 import java.util.*;
 
 public class ReconstructItinerary_332 {
     class Solution {
 
-        class Ticket implements Comparable<Ticket> {
+        class Ticket {
             String from;
             String to;
-            int id;
-            Ticket(String from, String to, int id) {
+            int idx;
+
+            public Ticket(String from, String to, int idx) {
                 this.from = from;
                 this.to = to;
-                this.id = id;
-            }
-
-            @Override
-            public int compareTo(Ticket o) {
-                return this.to.compareTo(o.to);
+                this.idx = idx;
             }
         }
 
-        public List<String> findItinerary(List<List<String>> T) {
-            List<Ticket> tickets = new ArrayList<>();
-            for (int i = 0; i < T.size(); i++) {
-                tickets.add(new Ticket(T.get(i).get(0), T.get(i).get(1), i));
+        public List<String> findItinerary(List<List<String>> tickets) {
+            Map<String, List<Ticket>> ticketMap = new HashMap<>();
+            for (int i = 0; i < tickets.size(); i++) {
+                String from = tickets.get(i).get(0);
+                String to = tickets.get(i).get(1);
+                ticketMap.putIfAbsent(from, new ArrayList<>());
+                ticketMap.get(from).add(new Ticket(from, to, i));
             }
 
-            Map<String, List<Ticket>> graph = new HashMap<>();
-            for (Ticket ticket : tickets) {
-                graph.putIfAbsent(ticket.from, new ArrayList<>());
-                graph.get(ticket.from).add(ticket);
+            for (Map.Entry<String, List<Ticket>> entry : ticketMap.entrySet()) {
+                entry.getValue().sort(Comparator.comparing(t -> t.to));
             }
 
-            for (String k : graph.keySet()) {
-                graph.get(k).sort(Ticket::compareTo);
-            }
-
-            List<String> path = new ArrayList<>();
-            path.add("JFK");
-
-            return path(graph, path, new boolean[T.size()], T.size(), 0);
-
+            return getBestPath(ticketMap, tickets, "JFK", new boolean[tickets.size()], 0, new ArrayList<String>() {{add("JFK");}});
         }
 
-        private List<String> path(Map<String, List<Ticket>> graph, List<String> path, boolean[] visited, int n, int comp) {
-            if (comp == n) return path;
-            String last = path.get(path.size() - 1);
-            List<String> ans = null;
-            for (Ticket next : graph.getOrDefault(last, new ArrayList<>())) {
-                if (visited[next.id]) continue;
-                List<String> newPath = new ArrayList<>(path);
-                newPath.add(next.to);
-                visited[next.id] = true;
-                List<String> ansPath = path(graph, newPath, visited, n, comp + 1);
-                visited[next.id] = false;
-                if (ansPath == null) continue;
-                ans = ansPath;
-                break;
+        private List<String> getBestPath(Map<String, List<Ticket>> ticketMap, List<List<String>> tickets, String lastDest, boolean[] visited, int done, List<String> pathSoFar) {
+            if (done == tickets.size()) {
+                return new ArrayList<>(pathSoFar);
             }
-            return ans;
+            List<Ticket> candidates = ticketMap.getOrDefault(lastDest, new ArrayList<>());
+            List<String> newPath = new ArrayList<>(pathSoFar);
+            List<String> bestPath = null;
+            for (Ticket ticket : candidates) {
+                if (visited[ticket.idx]) {
+                    continue;
+                }
+                String next = ticket.to;
+                visited[ticket.idx] = true;
+                newPath.add(next);
+                List<String> path = getBestPath(ticketMap, tickets, next, visited, done + 1, newPath);
+                visited[ticket.idx] = false;
+                newPath.remove(newPath.size() - 1);
+                if (path != null) {
+                    bestPath = path;
+                    break;
+                }
+            }
+
+            return bestPath;
         }
     }
 }
+
