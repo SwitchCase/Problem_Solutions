@@ -8,3 +8,5 @@ a.out
 */*/*.o
 */**/*.class
 *.class
+.idea
+.idea/*
