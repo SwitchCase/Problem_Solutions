@@ -3,8 +3,6 @@ package com.switchcase.ps.leetcode
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import java.awt.TexturePaint
-
 class AddBinary_67Test extends Specification {
 
     @Unroll
